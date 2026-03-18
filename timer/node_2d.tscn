@@ -1,0 +1,58 @@
+[gd_scene format=3 uid="uid://do632pfpysja1"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_y32ns"]
+font_size = 64
+outline_size = 5
+
+[node name="Node2D" type="Node2D" unique_id=378491103]
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=286179376]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -2158.0
+offset_top = -1285.0
+offset_right = 1732.0
+offset_bottom = 1374.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Label" type="Label" parent="." unique_id=1008585072]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -329.0
+offset_top = -279.0
+offset_right = 333.0
+offset_bottom = -88.0
+grow_horizontal = 2
+text = "ddd"
+label_settings = SubResource("LabelSettings_y32ns")
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="Button" type="Button" parent="." unique_id=758598844]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -224.0
+offset_top = 116.0
+offset_right = 220.0
+offset_bottom = 212.0
+grow_horizontal = 2
+grow_vertical = 0
+focus_mode = 0
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 64
+text = "Start"
+autowrap_mode = 3
+autowrap_trim_flags = 192

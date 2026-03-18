@@ -1,0 +1,284 @@
+[gd_scene format=3 uid="uid://bnuqri30fyhsf"]
+
+[ext_resource type="AudioStream" uid="uid://c6fk2d0wysf45" path="res://dragon-studio-calming-rain-loop-398653.mp3" id="1_qtu10"]
+[ext_resource type="AudioStream" uid="uid://7r7xrcickb18" path="res://transcendedlifting-race-start-beeps-125125.mp3" id="2_ee4bf"]
+
+[sub_resource type="GDScript" id="GDScript_uchyk"]
+script/source = "extends Control
+
+var total_focus_time := 0.0
+var focus_time := 0.0
+var break_time := 0.0
+var running := false
+var on_break := false
+
+var SWITCH_EVERY_BREAK := 300.0
+var SWITCH_EVERY_FOCUS := 1260.0
+const TICK := 0.1
+
+func _ready() -> void:
+	if not OS.is_debug_build():
+		SWITCH_EVERY_BREAK = 300.0
+		SWITCH_EVERY_FOCUS = 1260.0
+	$\"skip break\".visible = false
+	DisplayServer.window_set_flag(
+		DisplayServer.WINDOW_FLAG_ALWAYS_ON_TOP,
+		true
+	)
+	$stop.visible = false
+
+func _on_button_pressed() -> void:
+	if $Button.text == \"Start\":
+		$AudioStreamPlayer2D.playing = true
+	if not on_break:
+		$AudioStreamPlayer2D.playing = true
+	$Button.text = \"Continue\"
+	$Button.modulate = Color(0.0, 0.0, 0.0, 0.529)
+	$stop.visible = true
+	$stop2.visible = true
+
+	if running:
+		return # prevent multiple loops
+
+	running = true
+	_run_timer_loop()
+
+func _run_timer_loop() -> void:
+	while running:
+		await get_tree().create_timer(TICK).timeout
+		
+
+		if on_break:
+			break_time += TICK
+			if break_time >= SWITCH_EVERY_BREAK:
+				$\"skip break\".visible = false
+				$TranscendedliftingRaceStartBeeps125125.playing = true
+				break_time = 0.0
+				on_break = false
+		else:
+			focus_time += TICK
+			total_focus_time += TICK
+			if focus_time >= SWITCH_EVERY_FOCUS:
+				$\"skip break\".visible = true
+				$DragonStudioRelaxingGuitarLoop398646.playing = true
+				$AudioStreamPlayer2D.playing = false
+				focus_time = 0.0
+				on_break = true
+
+func _process(_delta: float) -> void:
+	var t := break_time if on_break else focus_time
+	var label := \"Break Time\" if on_break else \"Focus Time\"
+
+	if t >= 3600.0:
+		$Label.text = str(round((t * 100.0) / 3600.0) / 100.0) + \" Hours\"
+	elif t >= 60.0:
+		$Label.text = str(round((t * 10.0) / 60.0) / 10.0) + \" Mins\"
+	else:
+		$Label.text = str(round(t * 10.0) / 10.0) + \" Secs\"
+
+	$Label2.text = label
+	
+	if total_focus_time >= 3600.0:
+		$Label3.text = str(round((total_focus_time * 100.0) / 3600.0) / 100.0) + \" Hours\"
+	elif total_focus_time >= 60.0:
+		$Label3.text = str(round((total_focus_time * 10.0) / 60.0) / 10.0) + \" Mins\"
+	else:
+		$Label3.text = str(round(total_focus_time * 10.0) / 10.0) + \" Secs\"
+func _on_stop_pressed() -> void:
+	$AudioStreamPlayer2D.playing = false
+	$TranscendedliftingRaceStartBeeps125125.playing = false
+	$DragonStudioRelaxingGuitarLoop398646.playing = false
+	running = false
+	$Button.modulate = Color(1.0, 1.0, 1.0, 1.0)
+	$stop.visible = false
+
+
+func _on_stop_2_pressed() -> void:
+	$AudioStreamPlayer2D.playing = false
+	$TranscendedliftingRaceStartBeeps125125.playing = false
+	$DragonStudioRelaxingGuitarLoop398646.playing = false
+	$stop.visible = false
+	running = false
+	on_break = false
+	$Button.modulate = Color(1.0, 1.0, 1.0, 1.0)
+	$stop2.visible = false
+	$Button.text = \"Start\"
+	await get_tree().create_timer(0.1).timeout
+	total_focus_time = 0.0
+	focus_time = 0.0
+	break_time = 0.0
+
+
+func _on_skip_break_pressed() -> void:
+	on_break = false
+	break_time = 0
+	$DragonStudioRelaxingGuitarLoop398646.playing = false
+	$AudioStreamPlayer2D.playing = true
+	$\"skip break\".visible = false
+
+
+func _on_transcendedlifting_race_start_beeps_125125_finished() -> void:
+	$AudioStreamPlayer2D.playing = true
+"
+
+[sub_resource type="LabelSettings" id="LabelSettings_uchyk"]
+font_size = 32
+outline_size = 5
+
+[sub_resource type="LabelSettings" id="LabelSettings_0fbet"]
+font_size = 8
+outline_size = 1
+
+[node name="Control" type="Control" unique_id=631963750]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = SubResource("GDScript_uchyk")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=854585297]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -1.96
+anchor_top = -1.6066667
+anchor_right = 2.895
+anchor_bottom = 4.6246667
+offset_right = -274.5
+offset_bottom = -275.7
+grow_vertical = 0
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Label" type="Label" parent="." unique_id=1127713432]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -94.0
+offset_right = 97.0
+offset_bottom = 45.0
+grow_horizontal = 2
+label_settings = SubResource("LabelSettings_uchyk")
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="Label2" type="Label" parent="." unique_id=1380934608]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -61.0
+offset_bottom = 12.0
+grow_horizontal = 0
+label_settings = SubResource("LabelSettings_0fbet")
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="Label3" type="Label" parent="." unique_id=912586108]
+layout_mode = 1
+offset_right = 61.0
+offset_bottom = 12.0
+label_settings = SubResource("LabelSettings_0fbet")
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="stop2" type="Button" parent="." unique_id=1639094584]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -41.0
+offset_top = -20.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 1
+theme_override_font_sizes/font_size = 8
+text = "Restart"
+autowrap_mode = 3
+
+[node name="Button" type="Button" parent="." unique_id=1668181843]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -83.5
+offset_top = -53.0
+offset_right = 83.5
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 32
+text = "Start"
+autowrap_mode = 3
+
+[node name="stop" type="Button" parent="." unique_id=935487414]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -83.5
+offset_top = -53.0
+offset_right = 83.5
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 32
+text = "Stop"
+autowrap_mode = 3
+
+[node name="skip break" type="Button" parent="." unique_id=1384227206]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -46.0
+offset_top = -80.0
+offset_right = 46.0
+offset_bottom = -48.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 1
+theme_override_font_sizes/font_size = 8
+text = "Skip Break Session"
+autowrap_mode = 3
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=1594373237]
+stream = ExtResource("1_qtu10")
+
+[node name="TranscendedliftingRaceStartBeeps125125" type="AudioStreamPlayer2D" parent="." unique_id=342993316]
+position = Vector2(238, 120)
+stream = ExtResource("2_ee4bf")
+
+[node name="DragonStudioRelaxingGuitarLoop398646" type="AudioStreamPlayer" parent="." unique_id=1237660339]
+stream = ExtResource("2_ee4bf")
+
+[connection signal="pressed" from="stop2" to="." method="_on_stop_2_pressed"]
+[connection signal="pressed" from="Button" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="stop" to="." method="_on_stop_pressed"]
+[connection signal="pressed" from="skip break" to="." method="_on_skip_break_pressed"]
+[connection signal="finished" from="TranscendedliftingRaceStartBeeps125125" to="." method="_on_transcendedlifting_race_start_beeps_125125_finished"]
